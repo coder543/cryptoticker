@@ -7,9 +7,12 @@ extern crate clap;
 #[macro_use]
 extern crate serde_derive;
 
-use std::io::Read;
+use std::io::{Read, Write, stdout};
 use clap::{App, Arg};
 
+use std::thread::sleep;
+use std::time::Duration;
+use std::error::Error;
 
 #[derive(Debug)]
 struct StrError(String);
@@ -86,7 +89,16 @@ fn main() {
         .version(crate_version!())
         .about("Shows cryptoprices in a convenient ticker format for tmux")
         .author("Josh Leverette")
-        .arg(Arg::with_name("debug")
+        .arg(Arg::with_name("interval")
+            .short("i")
+            .long("interval")
+            .help("Sets the ticker to repeat on a time interval")
+        ).arg(Arg::with_name("interval-time")
+            .short("t")
+            .long("interval-time")
+            .help("Sets the time interval for the ticker.")
+            .default_value("90")
+        ).arg(Arg::with_name("debug")
             .short("d")
             .long("debug")
             .help("Shows verbose error messages")
@@ -98,14 +110,28 @@ fn main() {
         ).args_from_usage("<TICKER>...  'The name of the currency, like bitcoin or ethereum'").get_matches();
 
     let debug = matches.is_present("debug") || matches.is_present("verbose");
+    let interval = matches.is_present("interval");
 
-    for arg in matches.values_of("TICKER").unwrap() {
-        let _ = print_ticker(arg.to_string()).map_err(|err| {
-            if debug {
-                println!("{}", err.0)
-            } else {
-                print!("{}:error ", arg)
-            }
-        });
+    let time = value_t!(matches, "interval-time", u64).unwrap_or_else(|err| { println!("{}", err.description()); std::process::exit(1) });
+
+    let tickers: Vec<_> = matches.values_of("TICKER").unwrap().collect();
+
+    loop {
+        print!("\r");
+        for arg in &tickers {
+            let _ = print_ticker(arg.to_string()).map_err(|err| {
+                if debug {
+                    println!("{}", err.0)
+                } else {
+                    print!("{}:error ", arg)
+                }
+            });
+        }
+        print!("\x08");
+        stdout().flush().unwrap();
+        if !interval {
+            break;
+        }
+        sleep(Duration::from_secs(time));
     }
 }
