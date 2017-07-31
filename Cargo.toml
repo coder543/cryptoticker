@@ -2,10 +2,10 @@
 authors = ["Josh Leverette <josh.leverette@utiliflex.com>"]
 name = "cryptoticker"
 version = "0.1.0"
-
 [dependencies]
 clap = "2.24.2"
 reqwest = "0.6.2"
 serde = "1.0.8"
 serde_derive = "1.0.8"
 serde_json = "1.0.2"
+time = "0.1.37"

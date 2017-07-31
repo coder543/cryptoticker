@@ -7,6 +7,8 @@ extern crate clap;
 #[macro_use]
 extern crate serde_derive;
 
+extern crate time;
+
 use std::io::{Read, Write, stdout};
 use clap::{App, Arg};
 
@@ -79,7 +81,16 @@ fn print_ticker(name: String) -> Result<(), StrError> {
 
     let price = ticker.price_usd.unwrap_or("null".to_string());
 
-    print!("{}:{} ", name, price);
+    let short_name;
+    if name == "ethereum" {
+        short_name = "eth".to_string();
+    } else if name == "bitcoin" {
+        short_name = "btc".to_string();
+    } else {
+        short_name = name;
+    }
+
+    print!("{}:{} ", short_name, price);
 
     return Ok(());
 }
@@ -116,8 +127,9 @@ fn main() {
 
     let tickers: Vec<_> = matches.values_of("TICKER").unwrap().collect();
 
+//    let cur_time = ::time::get_time().sec;
+
     loop {
-        print!("\r");
         for arg in &tickers {
             let _ = print_ticker(arg.to_string()).map_err(|err| {
                 if debug {
@@ -131,6 +143,8 @@ fn main() {
         stdout().flush().unwrap();
         if !interval {
             break;
+        } else {
+            print!("\r");
         }
         sleep(Duration::from_secs(time));
     }
