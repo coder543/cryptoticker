@@ -2,6 +2,7 @@
 authors = ["Josh Leverette <josh.leverette@utiliflex.com>"]
 name = "cryptoticker"
 version = "0.1.0"
+license = "MIT"
 
 [dependencies]
 app_dirs = "1.1.1"
