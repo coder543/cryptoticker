@@ -165,7 +165,7 @@ fn main() {
                 .short("t")
                 .long("interval-time")
                 .help("Sets the time interval for the ticker.")
-                .default_value("90"),
+                .default_value("300"),
         )
         .arg(
             Arg::with_name("debug")
