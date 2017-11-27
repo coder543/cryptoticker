@@ -2,7 +2,9 @@
 authors = ["Josh Leverette <josh.leverette@utiliflex.com>"]
 name = "cryptoticker"
 version = "0.1.0"
+
 [dependencies]
+app_dirs = "1.1.1"
 clap = "2.24.2"
 reqwest = "0.6.2"
 serde = "1.0.8"
