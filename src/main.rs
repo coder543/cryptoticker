@@ -1,7 +1,7 @@
+extern crate app_dirs;
 extern crate reqwest;
 extern crate serde;
 extern crate serde_json;
-extern crate app_dirs;
 
 #[macro_use]
 extern crate clap;
@@ -12,7 +12,7 @@ extern crate time;
 
 use clap::{App, Arg};
 
-use std::io::{Read, Write, stdout};
+use std::io::{stdout, Read, Write};
 use std::path::PathBuf;
 use std::fs;
 use std::thread::sleep;
@@ -62,8 +62,7 @@ struct Currency {
     price_usd: Option<String>,
     price_btc: Option<String>,
 
-    #[serde(rename = "24h_volume_usd")]
-    volume_usd_24h: Option<String>,
+    #[serde(rename = "24h_volume_usd")] volume_usd_24h: Option<String>,
 
     market_cap_usd: Option<String>,
     available_supply: Option<String>,
@@ -107,9 +106,8 @@ fn fetch_ticker(
 }
 
 fn print_ticker(name: String, cache: bool, debug: bool) -> Result<(), StrError> {
-    let cache_dir = app_root(AppDataType::UserCache, &APP_INFO).expect(
-        "Could not find or create the cache directory",
-    );
+    let cache_dir = app_root(AppDataType::UserCache, &APP_INFO)
+        .expect("Could not find or create the cache directory");
 
     let ticker: Currency = if !cache {
         fetch_ticker(&name, None, debug)?
@@ -117,22 +115,20 @@ fn print_ticker(name: String, cache: bool, debug: bool) -> Result<(), StrError> 
         let cache_file = cache_dir.join(format!("{}{}", name, ".json"));
         let metadata = fs::metadata(&cache_file);
         match metadata {
-            Ok(metadata) => {
-                match metadata.modified().unwrap().elapsed() {
-                    Ok(elapsed) if elapsed < Duration::from_secs(1800) => {
-                        if debug {
-                            println!(
-                                "{} pulled from cache, {} seconds left until cache goes cold.",
-                                cache_file.display(),
-                                (Duration::from_secs(1800) - elapsed).as_secs()
-                            );
-                        }
-                        let file = fs::File::open(cache_file)?;
-                        serde_json::from_reader(file)?
+            Ok(metadata) => match metadata.modified().unwrap().elapsed() {
+                Ok(elapsed) if elapsed < Duration::from_secs(1800) => {
+                    if debug {
+                        println!(
+                            "{} pulled from cache, {} seconds left until cache goes cold.",
+                            cache_file.display(),
+                            (Duration::from_secs(1800) - elapsed).as_secs()
+                        );
                     }
-                    _ => fetch_ticker(&name, Some(cache_file), debug)?,
+                    let file = fs::File::open(cache_file)?;
+                    serde_json::from_reader(file)?
                 }
-            }
+                _ => fetch_ticker(&name, Some(cache_file), debug)?,
+            },
             _ => fetch_ticker(&name, Some(cache_file), debug)?,
         }
     };
@@ -171,9 +167,12 @@ fn main() {
                 .help("Sets the time interval for the ticker.")
                 .default_value("90"),
         )
-        .arg(Arg::with_name("debug").short("d").long("debug").help(
-            "Shows verbose error messages",
-        ))
+        .arg(
+            Arg::with_name("debug")
+                .short("d")
+                .long("debug")
+                .help("Shows verbose error messages"),
+        )
         .arg(
             Arg::with_name("verbose")
                 .short("v")
@@ -181,9 +180,7 @@ fn main() {
                 .help("Shows verbose error messages")
                 .hidden(true),
         )
-        .args_from_usage(
-            "<TICKER>...  'The name of the currency, like bitcoin or ethereum'",
-        )
+        .args_from_usage("<TICKER>...  'The name of the currency, like bitcoin or ethereum'")
         .get_matches();
 
     let debug = matches.is_present("debug") || matches.is_present("verbose");
@@ -198,10 +195,12 @@ fn main() {
 
     loop {
         for arg in &tickers {
-            let _ = print_ticker(arg.to_string(), !interval, debug).map_err(|err| if debug {
-                println!("{}", err.0)
-            } else {
-                print!("{}:error ", arg)
+            let _ = print_ticker(arg.to_string(), !interval, debug).map_err(|err| {
+                if debug {
+                    println!("{}", err.0)
+                } else {
+                    print!("{}:error ", arg)
+                }
             });
         }
         print!("\x08");
