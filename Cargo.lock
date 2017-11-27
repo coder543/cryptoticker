@@ -104,7 +104,7 @@ dependencies = [
 
 [[package]]
 name = "cryptoticker"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "app_dirs 1.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "clap 2.24.2 (registry+https://github.com/rust-lang/crates.io-index)",
