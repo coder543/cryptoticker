@@ -10,4 +10,4 @@ If you're using something other than `tmux`, it might be useful to run the comma
 
 `cryptoticker --clear-cache` will completely remove the cache directory. Useful if uninstalling or if you want to force the one-shot mode to refresh.
 
-`cryptoticker` uses `api.coinmarketcap.com`, which only updates once every 5 minutes, so refreshing any faster than that is just poor etiquette.
+`cryptoticker` uses `api.coinmarketcap.com`, which only updates once every 5 minutes, so refreshing any faster than that is just poor etiquette. `ethereum` and `bitcoin` are provided as examples, but `cryptoticker` supports all currencies that coinmarketcap supports on the API. 
