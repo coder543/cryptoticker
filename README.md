@@ -2,7 +2,13 @@
 
 This is a tool to show the current cryptocurrency prices in a nice ticker format for use in tmux. When used in the one-shot (short-lived command) mode that `tmux` prefers, prices will be cached automatically and updated only after 30 minutes, no matter how many times the command is executed. This is a nice balance between API usage and keeping the values current.
 
+# Installation
+
+`cargo install --git https://github.com/coder543/cryptoticker`
+
 # Usage
+
+`cryptoticker --help` provides a useful summary of the options that are supported.
 
 In your `~/.tmux.conf` file, you can add this to your statusbar to track ethereum and bitcoin prices: `#[fg=white,bg=default,bright]#(cryptoticker ethereum bitcoin)` 
 
