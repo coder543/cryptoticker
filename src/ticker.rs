@@ -97,6 +97,8 @@ pub fn print_ticker(name: String, cache: bool, debug: bool) -> Result<(), StrErr
         short_name = "eth".to_string();
     } else if name == "bitcoin" {
         short_name = "btc".to_string();
+    } else if name == "litecoin" {
+        short_name = "ltc".to_string();
     } else {
         short_name = name;
     }
